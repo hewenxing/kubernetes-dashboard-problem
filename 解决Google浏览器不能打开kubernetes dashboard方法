@@ -1,0 +1,14 @@
+解决Google浏览器不能打开kubernetes dashboard方法
+mkdir key && cd key
+#生成证书
+openssl genrsa -out dashboard.key 2048 
+openssl req -new -out dashboard.csr -key dashboard.key -subj '/CN=172.16.35.36'
+openssl x509 -req -in dashboard.csr -signkey dashboard.key -out dashboard.crt 
+#创建新的证书secret
+kubectl create secret generic kubernetes-dashboard-certs --from-file=dashboard.key --from-file=dashboard.crt -n kube-system
+#查看pod
+kubectl get pod -n kube-system
+#重启pod
+kubectl delete pod <pod name> -n kube-system
+完成以上操作之后我们重新刷新一下谷歌浏览器
+这个时候我们就可以通过谷歌浏览器打开kubernetes dashboard了
